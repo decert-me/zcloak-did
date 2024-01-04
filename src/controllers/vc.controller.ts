@@ -20,9 +20,10 @@ export class VCController {
 
     const {receiver, params} = issueDto;
     // 验证
-    this.vcService.issue(issueDto)
-    respData.data = issueDto
+    await this.vcService.issue(issueDto);
+    respData.data = issueDto;
 
+    logger.debug('/vc/issue', respData);
     return respData;
   }
 }

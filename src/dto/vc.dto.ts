@@ -1,5 +1,5 @@
 export class IssueDto {
   readonly receiver: string;
-  params: JSON;
+  params: any;
   vc? : string;
 }
