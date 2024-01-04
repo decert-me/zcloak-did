@@ -1,0 +1,7 @@
+OPENAI_API_KEY = ""
+
+# http 监听端口
+PORT = 8091
+
+# 日志级别
+LOGGER_LEVEL = 'info'
