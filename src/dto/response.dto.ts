@@ -11,7 +11,7 @@ export class SucceedResponse {
 }
 
 export class FailedResponse {
-  code: number = 1;
+  code: number = -1;
   msg: string;
   data: any;
 }
@@ -19,5 +19,11 @@ export class FailedResponse {
 export class ResponseData {
   code: number = 0;
   msg: string = 'OK';
+  data: any = {};
+}
+
+export class ServiceResp {
+  succeed: boolean = true;
+  msg: string = '';
   data: any = {};
 }

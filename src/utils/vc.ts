@@ -6,7 +6,6 @@ import { Raw, VerifiableCredentialBuilder } from "@zcloak/vc";
 
 import type { CType } from "@zcloak/ctype/types";
 import type { RawCredential } from "@zcloak/vc/types";
-import type { DidUrl } from "@zcloak/did-resolver/types";
 import type { VerifiableCredential } from "@zcloak/vc/types";
 
 import { resolver } from "../zclaok/resolverHelper";
@@ -14,12 +13,21 @@ import { readDidKeysFile } from "../zclaok/didHelper";
 import { getCtypeFromHash } from "../zclaok/ctypeHelper";
 import { fromDidDocument } from "@zcloak/did/did/helpers";
 import { sendMessage2Server } from "../zclaok/messageHelper";
+import { Did } from "@zcloak/did";
+import { MyLogger } from '../utils/mylogger';
+const logger = new MyLogger();
 
+let inited = false;
 
 export async function issue(receiver: any, ctypeHash: string, contents: any): Promise<string> {
   // initCrypto for wasm
-  await initCrypto();
-  console.log("initCrypto for wasm...");
+  logger.debug('====issue====1');
+
+  if (!inited) {
+    await initCrypto();
+    inited = true;
+    console.log("initCrypto for wasm...");
+  }
 
   const holderDidUrl = receiver;
   const holderDidDoc = await resolver.resolve(holderDidUrl);
@@ -58,16 +66,12 @@ export async function issue(receiver: any, ctypeHash: string, contents: any): Pr
     true
   );
 
-  // console.log(vc);
+  _sendMessage2Server(vc, attester, holder);
+  return JSON.stringify(vc);
+};
 
-  // const holderDidUrl2: DidUrl =
-  // "did:zk:0x237Ec821FDF943776A8e27a9fd9dd6f78400071b";
-  // const holderDidDoc2 = await resolver.resolve(holderDidUrl2);
-  // const isValid = await vcVerify(vc,holderDidDoc2);
-  // console.log('====isvalid====', isValid);
-
-
-  // step6: encrypt message
+async function _sendMessage2Server(vc: VerifiableCredential<any>, attester: Did, holder: Did) {
+  // encrypt message
   // notice: receiverUrl parameter is holder's keyAgreement key
   const message = await encryptMessage(
     "Send_issuedVC",
@@ -78,8 +82,7 @@ export async function issue(receiver: any, ctypeHash: string, contents: any): Pr
     resolver
   );
 
-  // step7: send encrypted message to server
+  // send encrypted message to server
   await sendMessage2Server(message);
-
-  return JSON.stringify(vc);
-};
+  logger.debug('====_sendMessage2Server====2');
+}

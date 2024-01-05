@@ -1,15 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { IssueDto } from '../dto/vc.dto';
+import { ServiceResp } from '../dto/response.dto';
 import { issue as issueVC } from '../utils/vc';
+import { MyLogger } from '../utils/mylogger';
+const logger = new MyLogger();
 
 @Injectable()
 export class VCService {
-  async issue(issueDto: IssueDto): Promise<IssueDto> {
-    const ctypeHash = '0x0706df1798e0c59ab3190b948e173b0081105fbf937d2d520b548a9575754d06';
-    // TODO: issueDto.params 校验
-    const vc = await issueVC(issueDto.receiver, ctypeHash, issueDto.params);
-    issueDto.vc = vc;
+  async issue(issueDto: IssueDto): Promise<ServiceResp> {
+    const serviceResp = new ServiceResp();
+    try {
+      const vc = await issueVC(issueDto.receiver, issueDto.ctypeHash, issueDto.params);
+      issueDto.vc = vc;
+    } catch (err) {
+      logger.error('VCService issue failed', issueDto, err.message);
+      serviceResp.succeed = false;
+      serviceResp.msg = err.message;
+    }
 
-    return issueDto;
+    return serviceResp;
   }
 }
