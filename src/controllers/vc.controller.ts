@@ -24,7 +24,7 @@ export class VCController {
       return resp;
     }
 
-    issueDto.ctypeHash = '0x0706df1798e0c59ab3190b948e173b0081105fbf937d2d520b548a9575754d06';// TODO: 暂时固定一个
+    issueDto.ctypeHash = process.env.CTYPE_HAHS;// TODO: 暂时固定一个
 
     // 验证
     const serviceResp = await this.vcService.issue(issueDto);
