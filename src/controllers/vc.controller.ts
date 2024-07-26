@@ -37,7 +37,7 @@ export class VCController {
     let respData = new ResponseData();
     respData.data = issueDto;
 
-    logger.debug('/vc/issue', respData);
+    logger.log('issue vc', { 'receiver': issueDto.receiver, 'params': issueDto.params });
     return respData;
   }
 }
